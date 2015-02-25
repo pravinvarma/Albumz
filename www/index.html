@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+           <link rel="stylesheet" href="css/angular-material.min.css">
+		 <script type="text/javascript" src="cordova.js"></script>
+		  <script src="js/hammer.min.js"></script>
+		  <script src="js/angular.js"></script>
+		    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		  <script type="text/javascript" src="js/angular-route.min.js"></script>
+		  <script src="js/angular-animate.min.js"></script>
+		<script src="js/angular-aria.min.js"></script>
+		<script src="js/angular-messages.min.js"></script>
+				  <script type="text/javascript" src="js/angular-material.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+         <script type="text/javascript" src="js/openfb.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+
+
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
+ <style>
+ body{background:#fff; font-size:14px}
+ body .buttons button{ width:100%; margin:5px 0; padding:10px 0}
+ #loader{ position:absolute; left:50%; top:50%; z-index:1; display:none; margin:-50px 0 0 -30px; }
+ .loginBox input{ width:100%}
+ #welcomescreen{ display:none;}
+ ul{ list-style:none;padding:0; margin:0;}
+ ul li{ padding:10px;list-style:none;}
+ .md-tile-left{ font-size:30px; padding:10px; margin:0 5px 0 0; vertical-align:middle; line-height:70px; color:#fff; background:rgb(144, 210, 253); border-radius:10000px; width:80px; height:80px; text-align:center;}
+md-item-content{ margin:0 0 10px; border-bottom:1px solid #ccc;padding:10px;}
+ </style>
+        
+    </head>
+    <body  ng-app="buttonsDemo1">
+    <div id="loginscreen">
+ <md-progress-circular class="md-warn"  id="loader" md-mode="indeterminate"></md-progress-circular>
+<ng-app="inputErrorsApp" ng-controller="AppCtrl" layout="column">
+  <md-toolbar class="md-primary">
+    <h1 class="md-toolbar-tools" layout-align="center">
+      Login Here
+    </h1>
+
+  </md-toolbar>
+  
+  
+  <div ng-controller="AppCtrl" class="sample">
+
+  <form ng-submit="addTab(tTitle,tContent)" flex>
+<div layout="row">
+<div flex="5"></div>
+<div flex="90">
+
+    <div class="loginBox"  >
+    
+      <md-text-float label="Username" ng-model="tTitle" ></md-text-float>
+      <md-text-float label="Password" ng-model="tContent"></md-text-float>
+        <md-checkbox ng-model="data.cb1" aria-label="Checkbox 1">Remember Me 
+  </md-checkbox>
+    
+ 
+           
+            <div layout="column" class="buttons">
+  <div> <md-button class="md-warn md-raised md-hue-2" ng-click="showAlert($event)">Login</md-button></div>
+  <div> <md-button class="md-raised md-primary" onclick="login()">Facebook</md-button></div>
+</div>
+      </div>
+    </div>
+    <div flex="5"></div>
+  </form>
+</div>
+</div></div>
+<div id="welcomescreen">
+<md-toolbar class="md-primary" md-scroll-shrink >
+    <h1 class="md-toolbar-tools" layout-align="center" id="userName">
+     
+    </h1>
+
+  </md-toolbar>
+<img id="userPic" width="100%" src=""/>
+ <md-list layout="column" id="cover">
+</div>
+   <script>
+    angular.module('buttonsDemo1', ['ngMaterial', 'ngMessages']) .controller('AppCtrl', function ($scope, $log, $mdDialog) {
+    $scope.data = {};
+     $scope.data.cb1 = true;
+     $scope.alert = '';
+  $scope.showAlert = function(ev) {
+    $mdDialog.show(
+      $mdDialog.alert()
+        .title('Fields are required')
+        .content('Please enter your Username/ Password to proceed.')
+        .ariaLabel('Password notification')
+        .ok('Got it!')
+        .targetEvent(ev)
+    );
+  };
+  });
+      openFB.init({appId: '657145967699199'});
+
+   function login() {
+ loader();
+        openFB.login(       
+                function(response) {
+                
+                    if(response.status === 'connected') {
+                    //   alert('Facebook login succeeded, got access token: ' + response.authResponse.token);
+                      $('#loginscreen').hide();
+                      $('#welcomescreen').show();
+                      getInfo();
+                      getphotos();
+                      
+  } else {
+                        alert('Facebook login failed: ' + response.error);
+                    }
+                }, {scope: 'email,read_stream,publish_stream, user_photos'});
+                
+           
+    }
+       
+  </script>
+  <script>
+      function getInfo() {
+        openFB.api({
+            path: '/me',
+            success: function(data) {
+                document.getElementById("userName").innerHTML = data.name;
+                document.getElementById("userPic").src = 'http://graph.facebook.com/' + data.id + '/picture?type=large';
+            }
+           });
+    }
+
+  
+  function loader(){ if(document.getElementById('loader').style.display=="block") {document.getElementById('loader').style.display="none";} else{document.getElementById('loader').style.display="block"}}
+
+  </script>
+    <script>        function getphotos() {
+  loader();
+        openFB.api({
+            path: '/me/albums',
+            success: function(response) {
+            for(i=0;i<=response.data.length;i++)
+    
+            {
+        
+            	$('#cover').append('  <md-item>  <md-item-content> <div class="md-tile-left md-hue-1">'+response.data[i].count+'</div> <div class="md-tile-content">'+response.data[i].name +'</div>    </md-item-content>   </md-item>');
+            	
+              
+            }
+          
+           },
+           error:function(){alert();}
+           
+           }, {scope: 'email,read_stream,publish_stream, user_photos'});
+    }</script>
+    </body>
+</html>
